@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10 Clients", "10 Clients", "{C68807E7-4AB6-4075-8B0F-B718201BFB58}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "30 Business Layer Interfaces", "30 Business Layer Interfaces", "{46FA2355-DF25-46A8-B21D-0DBA8205F68B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "40 Repository Interfaces", "40 Repository Interfaces", "{05151AD5-2831-4342-A756-BDFCD6721F2F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "50 Domain Entities", "50 Domain Entities", "{EBA22281-31D7-4E6C-B95A-A4F1B4FF7F7C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "60 Common", "60 Common", "{0A7B3DFC-A27D-44C0-BA77-5A5CE302F3E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "70 --------------------------", "70 --------------------------", "{2AB0BE88-50B0-4A06-B326-29F68A4153C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "80 Dependency Resolvers", "80 Dependency Resolvers", "{A7E88DF4-413A-45C2-AF22-D71AEFF4D377}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "90 Dependencies", "90 Dependencies", "{387AD246-A139-4E94-B410-823C0559CD3A}"
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

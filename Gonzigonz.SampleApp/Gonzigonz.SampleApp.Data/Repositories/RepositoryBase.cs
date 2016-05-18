@@ -1,7 +1,5 @@
 ﻿using System;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Gonzigonz.SampleApp.Domain;
@@ -17,12 +15,13 @@ namespace Gonzigonz.SampleApp.Data.Repositories
 			_data = data;
 		}
 
-		public void Create(TEntity entity)
+		public TEntity Create(TEntity entity)
 		{
 			entity.Id = _data.Count;
 			entity.CreatedTime = DateTime.UtcNow;
 			entity.ModifiedTime = DateTime.UtcNow;
 			_data[entity.Id] = entity;
+			return _data[entity.Id];
 		}
 
 		public ICollection<TEntity> ReadAll()
@@ -37,10 +36,11 @@ namespace Gonzigonz.SampleApp.Data.Repositories
 			return entityToReturn;
 		}
 
-		public void Update(TEntity entityToUpdate)
+		public TEntity Update(TEntity entityToUpdate)
 		{
 			entityToUpdate.ModifiedTime = DateTime.UtcNow;
 			_data[entityToUpdate.Id] = entityToUpdate;
+			return _data[entityToUpdate.Id];
 		}
 
 		public void Delete(int id)

@@ -8,6 +8,7 @@ namespace Gonzigonz.SampleApp.Data.Repositories
 {
 	public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase
 	{
+		static int _nextIndex = 0;
 		private ConcurrentDictionary<int, TEntity> _data;
 
 		public RepositoryBase(ConcurrentDictionary<int, TEntity> data)
@@ -17,10 +18,11 @@ namespace Gonzigonz.SampleApp.Data.Repositories
 
 		public TEntity Create(TEntity entity)
 		{
-			entity.Id = _data.Count;
+			entity.Id = _nextIndex;
 			entity.CreatedTime = DateTime.UtcNow;
 			entity.ModifiedTime = DateTime.UtcNow;
 			_data[entity.Id] = entity;
+			_nextIndex++;
 			return _data[entity.Id];
 		}
 

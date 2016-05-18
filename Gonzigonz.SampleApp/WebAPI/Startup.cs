@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Gonzigonz.SampleApp.Data.Repositories;
+using Newtonsoft.Json.Serialization;
 
 namespace WebAPI
 {
@@ -26,7 +27,10 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc()
+				.AddJsonOptions(options => {
+					options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+				});
 
 			// Repositories
 			services.AddSingleton<ITodoItemRepository, TodoItemRepository>();

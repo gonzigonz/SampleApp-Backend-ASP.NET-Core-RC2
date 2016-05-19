@@ -26,13 +26,16 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+			// Add Cors services.
+			services.AddCors();
+
             // Add framework services.
             services.AddMvc()
 				.AddJsonOptions(options => {
 					options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 				});
 
-			// Repositories
+			// All other services.
 			services.AddSingleton<ITodoItemRepository, TodoItemRepository>();
         }
 
@@ -44,6 +47,11 @@ namespace WebAPI
 
 			app.UseDefaultFiles();
 			app.UseStaticFiles();
+
+			// Allow any client from any origin to use our API
+			app.UseCors(builder =>
+				builder.AllowAnyOrigin()
+			);
 
 			app.UseMvc();
         }

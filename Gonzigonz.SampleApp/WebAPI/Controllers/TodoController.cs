@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
 			return Json(_todoRepo.ReadAll());
 		}
 
-		[HttpGet("{id}", Name = "GetTodo")]
+		[HttpGet("{id:int:min(1)}", Name = "GetTodo")]
 		public JsonResult Get(int id)
 		{
 			var item = _todoRepo.ReadById(id);
@@ -49,13 +49,13 @@ namespace WebAPI.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut("{id:int:min(1)}")]
 		public JsonResult Put(int id, [FromBody] TodoItem updatedTodoItem)
 		{
-			if (updatedTodoItem == null || updatedTodoItem.Id != id)
+			if (updatedTodoItem.Id != id)
 			{
 				Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				return Json("Invalid item was passed or the item id does not match the id supplied in the url");
+				return Json("The item id does not match the id supplied in the url");
 			}
 
 			var todo = _todoRepo.ReadById(id);
@@ -69,7 +69,7 @@ namespace WebAPI.Controllers
 			return Json(_todoRepo.Update(updatedTodoItem));
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete("{id:int:min(1)}")]
 		public JsonResult Delete(int id)
 		{
 			var itemToDelete = _todoRepo.ReadById(id);

@@ -8,7 +8,7 @@ namespace Gonzigonz.SampleApp.Data.Repositories
 {
 	public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase
 	{
-		static int _nextIndex = 0;
+		static int _nextIndex = 1;
 		private ConcurrentDictionary<int, TEntity> _data;
 
 		public RepositoryBase(ConcurrentDictionary<int, TEntity> data)

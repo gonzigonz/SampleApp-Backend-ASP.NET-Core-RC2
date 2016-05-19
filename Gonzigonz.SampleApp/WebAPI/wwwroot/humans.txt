@@ -1,0 +1,16 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Gonzalo Lucero -- Author -- @GonziGonzAu
+
+# THANKS
+
+    https://www.ssw.com.au
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    jQuery, Modernizr
+	ASP.NET Core

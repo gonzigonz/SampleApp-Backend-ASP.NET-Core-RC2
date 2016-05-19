@@ -6,8 +6,9 @@ $(document).ready(function () {
 	liveUrlLink.attr("href", siteUrl + "api/todo");
 	liveUrlLink.text(siteUrl + "api/todo:");
 
-	$.get("/api/todo", function (data) {
-		$("#liveTodoItems").text(JSON.stringify(data, null, 2));
-	});
+	$.ajax({ url: "/api/todo", cache: false })
+		.always(function (data) {
+			$("#liveTodoItems").text(JSON.stringify(data, null, 2));
+		});
 
 });

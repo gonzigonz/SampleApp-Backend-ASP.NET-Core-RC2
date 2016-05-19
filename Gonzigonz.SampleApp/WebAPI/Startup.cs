@@ -27,7 +27,13 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
 			// Add Cors services.
-			services.AddCors();
+			services.AddCors(options => options
+				.AddPolicy("AllowAll", p => p
+					.AllowAnyOrigin()
+					.AllowAnyMethod()
+					.AllowAnyHeader()
+				)
+			);
 
             // Add framework services.
             services.AddMvc()
@@ -49,9 +55,7 @@ namespace WebAPI
 			app.UseStaticFiles();
 
 			// Allow any client from any origin to use our API
-			app.UseCors(builder =>
-				builder.AllowAnyOrigin()
-			);
+			app.UseCors("AllowAll");
 
 			app.UseMvc();
         }

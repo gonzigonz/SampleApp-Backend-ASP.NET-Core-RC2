@@ -13,43 +13,64 @@
 	<script src="js/vendor/jquery-1.11.2.min.js"></script>
 </head>
 <body>
-	<h1>Web Client</h1>
+	<h3>Basic Javascript WebAPI Client</h3>
+	<div>jQuery Test: <span id="test">Testing...</span></div>
+	<hr>
 
-	<select id="apiUrl"></select>
-	<button id="getTodoList">Get Todo List</button>
+	<div style="margin-bottom:5px">
+		<lable>Any Url:</lable>
+		<input id="urlAny" type="url" size="50" value="https://api.github.com" />
+		<button id="getResponseAny">GET</button>
+	</div>
+	<div style="margin-bottom:5px">
+		<lable>Select Url:</lable>
+		<select id="urlSelect"></select>
+		<button id="getResponseSelected">GET</button>
+	</div>
 
-	<pre id="output">Press "Get Todo List" to load items</pre>
+	<div style="border:1px solid; padding:0 10px">
+		<p>Request Url:</p>
+		<pre id="requestUrl"></pre>
+		<p>Response:</p>
+		<pre id="response">Click "Get Response" to send GET request</pre>
+	</div>
 
 	<script>
 		$(function () {
 
-			var currentUrlRoot = window.location.href;
-			var localUrlRoot = "http://localhost:5000";
-			var azureUrlRoot = "http://gonzigonz-api.azurewebsites.net"
+			// Test jQuery is working
+			$("#test").text("Ok");
 
-			var apiUrlOptions = $("#apiUrl");
-			apiUrlOptions.append($("<option />").val(localUrlRoot).text(localUrlRoot));
-			apiUrlOptions.append($("<option />").val(azureUrlRoot).text(azureUrlRoot));
-			apiUrlOptions.append($("<option />").val(currentUrlRoot).text(currentUrlRoot));
+			// Select Url Options
+			var localUrlRoot = "http://localhost:5000/api/todo";
+			var azureUrlRoot = "https://gonzigonz-api.azurewebsites.net/api/todo"
+			var urlSelect = $("#urlSelect");
+			urlSelect.append($("<option />").val(azureUrlRoot).text(azureUrlRoot));
+			urlSelect.append($("<option />").val(localUrlRoot).text(localUrlRoot));
 
+			// Functions
 			var showResponse = function (response) {
-
-				$("#output").text(JSON.stringify(response, null, 4));
-
+				$("#response").text(JSON.stringify(response, null, 4));
 			};
 
-			var getTodoList = function () {
-
-				var url = $("#apiUrl option:selected").text() + "/api/todo";
-
-				$.ajax({ url: url, cache: false })
-					.always(showResponse);
+			var getResponse = function (url) {
+				$("#response").text("Waiting for response...");
+				$("#requestUrl").text(url);
+				$.ajax({ url: url, cache: false }).always(showResponse);
 
 				return false;
-
 			};
 
-			$("#getTodoList").click(getTodoList)
+			// Events
+			$("#getResponseAny").click(function () {
+				var url = $("#urlAny").val();
+				getResponse(url);
+			});
+
+			$("#getResponseSelected").click(function () {
+				var url = $("#urlSelect option:selected").text();
+				getResponse(url);
+			});
 
 		});
 	</script>

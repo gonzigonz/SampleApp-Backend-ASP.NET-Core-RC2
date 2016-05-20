@@ -51,6 +51,13 @@ namespace WebAPI
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+			if (env.IsDevelopment())
+			{
+				app.UseRuntimeInfoPage(); // default path is /runtimeinfo
+			}
+
+			app.UseStatusCodePages();
+
 			app.UseDefaultFiles();
 			app.UseStaticFiles();
 

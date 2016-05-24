@@ -2,7 +2,7 @@
 
 namespace Gonzigonz.SampleApp.RepositoryInterfaces
 {
-	public interface ITodoItemRepository : IRepository<TodoItem>
+	public interface ITodoItemRepository : IRepository<TodoItem, int>
     {
     }
 }

@@ -6,17 +6,25 @@ using Microsoft.Extensions.Logging;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Gonzigonz.SampleApp.Data.Repositories;
 using Newtonsoft.Json.Serialization;
+using Gonzigonz.SampleApp.Data.Context;
+using Microsoft.EntityFrameworkCore;
+using ASP.NetCore.Empty.Data;
+using Gonzigonz.SampleApp.Data.UnitOfWork;
 
 namespace WebAPI
 {
 	public class Startup
     {
-        public Startup(IHostingEnvironment env)
+		private IHostingEnvironment _hostingEnvironment;
+
+		public Startup(IHostingEnvironment hostingEnvironment)
         {
+			_hostingEnvironment = hostingEnvironment;
+
             var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
+                .SetBasePath(_hostingEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{_hostingEnvironment.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -26,7 +34,7 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-			// Add Cors services.
+			// Add Cors service.
 			services.AddCors(options => options
 				.AddPolicy("AllowAll", p => p
 					.AllowAnyOrigin()
@@ -35,34 +43,40 @@ namespace WebAPI
 				)
 			);
 
-            // Add framework services.
-            services.AddMvc()
+			// Add framework services
+			services.AddDbContext<AppDbContext>(options =>
+				options.UseInMemoryDatabase()
+			);
+			services.AddMvc()
 				.AddJsonOptions(options => {
 					options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 				});
 
 			// All other services.
-			services.AddSingleton<ITodoItemRepository, TodoItemRepository>();
+			services.AddScoped<IUnitOfWork, AppUnitOfWork>();
+			services.AddScoped<ITodoItemRepository, TodoItemRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-			if (env.IsDevelopment())
-			{
-				app.UseRuntimeInfoPage(); // default path is /runtimeinfo
-			}
+			// Before we setup the pipeline, get the database up
+			AppDatabase.InitializeForDevelopment(app.ApplicationServices);
+			app.UseRuntimeInfoPage();
+			app.UseDeveloperExceptionPage();
+			app.UseBrowserLink();
+
+			// Allow any client from any origin to use our API
+			app.UseCors("AllowAll");
 
 			app.UseStatusCodePages();
 
 			app.UseDefaultFiles();
 			app.UseStaticFiles();
-
-			// Allow any client from any origin to use our API
-			app.UseCors("AllowAll");
 
 			app.UseMvc();
         }

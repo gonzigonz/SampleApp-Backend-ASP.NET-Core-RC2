@@ -1,15 +1,25 @@
-﻿using Gonzigonz.SampleApp.Domain;
-using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Gonzigonz.SampleApp.RepositoryInterfaces
 {
-	public interface IRepository<TEntity> where TEntity : EntityBase
+	public interface IRepository<TEntity, TId> 
+		where TEntity : class
+		where TId : struct
     {
-		TEntity Create(TEntity entity);
-		ICollection<TEntity> ReadAll();
-		TEntity ReadById(int Id);
-		TEntity Update(TEntity entityToUpdate);
-		void Delete(int id);
+		// CREATE
+		void Create(TEntity entity);
+
+		// READ
+		IQueryable<TEntity> ReadAll();
+		IQueryable<TEntity> Read(Expression<Func<TEntity, bool>> filter);
+
+		// UPDATE
+		void Update(TEntity entityToUpdate);
+
+		// DELETE
+		void Delete(TId id);
 		void Delete(TEntity entityToDelete);
 	}
 }

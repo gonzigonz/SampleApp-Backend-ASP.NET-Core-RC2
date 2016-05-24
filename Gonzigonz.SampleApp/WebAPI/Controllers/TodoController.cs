@@ -1,6 +1,7 @@
 ﻿using Gonzigonz.SampleApp.Domain;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Net;
 
 namespace WebAPI.Controllers
@@ -9,10 +10,12 @@ namespace WebAPI.Controllers
 	public class TodoController : Controller
 	{
 		private ITodoItemRepository _todoRepo;
+		private IUnitOfWork _unitOfWork;
 
-		public TodoController(ITodoItemRepository todoItemRepository)
+		public TodoController(ITodoItemRepository todoItemRepository, IUnitOfWork unitOfWork)
 		{
 			_todoRepo = todoItemRepository;
+			_unitOfWork = unitOfWork;
 		}
 
 		[HttpGet("")]
@@ -24,13 +27,14 @@ namespace WebAPI.Controllers
 		[HttpGet("{id:int:min(1)}", Name = "GetTodo")]
 		public JsonResult Get(int id)
 		{
-			var item = _todoRepo.ReadById(id);
-			if (item == null)
+			var itemFromDatabase = _todoRepo.Read(i => i.Id == id).FirstOrDefault();
+			if (itemFromDatabase.Id != id)
 			{
 				Response.StatusCode = (int)HttpStatusCode.NotFound;
 				return Json($"No item was found with an id of {id}");
 			}
-			return Json(item);
+
+			return Json(itemFromDatabase);
 		}
 
 		[HttpPost("")]
@@ -43,10 +47,13 @@ namespace WebAPI.Controllers
 			}
 			else
 			{
-				Response.StatusCode = (int)HttpStatusCode.Created;
-				Response.Headers["Location"] = $"/api/Todo/{newTodoItem.Id}"; //TODO: Gonz do this properly... all api items should provide valid urls.
-				return Json(_todoRepo.Create(newTodoItem));
+				_todoRepo.Create(newTodoItem);
+				_unitOfWork.SaveChangesAsync();
 			}
+
+			Response.StatusCode = (int)HttpStatusCode.Created;
+			Response.Headers["Location"] = $"/api/Todo/{newTodoItem.Id}"; //TODO: Gonz do this properly... all api items should provide valid urls.
+			return Json("Item saved successfully");
 		}
 
 		[HttpPut("{id:int:min(1)}")]
@@ -58,28 +65,40 @@ namespace WebAPI.Controllers
 				return Json("The item id does not match the id supplied in the url");
 			}
 
-			var todo = _todoRepo.ReadById(id);
-			if (todo == null)
+			var itemFromDatabaseId = _todoRepo
+				.Read(i => i.Id == id)
+				.Select(i => i.Id)
+				.FirstOrDefault();
+			if (itemFromDatabaseId != id)
 			{
 				Response.StatusCode = (int)HttpStatusCode.NotFound;
 				return Json($"No item was found with an id of {id}");
 			}
+			else
+			{
+				_todoRepo.Update(updatedTodoItem);
+				_unitOfWork.SaveChangesAsync();
+			}
 
-			Response.Headers["Location"] = $"/api/Todo/{updatedTodoItem.Id}"; //TODO: Gonz do this properly... all api items should provide valid urls.
-			return Json(_todoRepo.Update(updatedTodoItem));
+			Response.Headers["Location"] = $"/api/Todo/{id}"; //TODO: Gonz do this properly... all api items should provide valid urls.
+			return Json("Item updated successfully");
 		}
 
 		[HttpDelete("{id:int:min(1)}")]
 		public JsonResult Delete(int id)
 		{
-			var itemToDelete = _todoRepo.ReadById(id);
+			var itemToDelete = _todoRepo.Read(i => i.Id == id).FirstOrDefault();
 			if (itemToDelete == null)
 			{
 				Response.StatusCode = (int)HttpStatusCode.NotFound;
 				return Json($"No item was found with an id of {id}");
 			}
-			_todoRepo.Delete(itemToDelete);
-			return Json($"The item with the id of {itemToDelete.Id} was deleted");
+			else
+			{
+				_todoRepo.Delete(id);
+			}
+
+			return Json($"The item with the id of {id} was deleted");
 		}	
 	}
 }

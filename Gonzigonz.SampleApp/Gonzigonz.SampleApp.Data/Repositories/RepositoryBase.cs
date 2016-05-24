@@ -1,59 +1,66 @@
 ﻿using System;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Linq.Expressions;
 using Gonzigonz.SampleApp.Domain;
 
 namespace Gonzigonz.SampleApp.Data.Repositories
 {
-	public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase
+	public abstract class RepositoryBase<TEntity> : IRepository<TEntity, int> 
+		where TEntity : EntityBase
 	{
-		static int _nextIndex = 1;
-		private ConcurrentDictionary<int, TEntity> _data;
+		private DbContext _context;
+		private DbSet<TEntity> _dbSet;
+		private object _tEntity;
 
-		public RepositoryBase(ConcurrentDictionary<int, TEntity> data)
+		public RepositoryBase(DbContext context)
 		{
-			_data = data;
+			_context = context;
+			_dbSet = _context.Set<TEntity>();
 		}
 
-		public TEntity Create(TEntity entity)
+		protected DbContext Context
 		{
-			entity.Id = _nextIndex;
-			entity.CreatedTime = DateTime.UtcNow;
-			entity.ModifiedTime = DateTime.UtcNow;
-			_data[entity.Id] = entity;
-			_nextIndex++;
-			return _data[entity.Id];
+			get { return _context; }
 		}
 
-		public ICollection<TEntity> ReadAll()
+		// CREATE
+		public void Create(TEntity entityToAdd)
 		{
-			return _data.Values;
+			_dbSet.Add(entityToAdd);
 		}
 
-		public TEntity ReadById(int Id)
+		// READ
+		public IQueryable<TEntity> ReadAll()
 		{
-			TEntity entityToReturn;
-			_data.TryGetValue(Id, out entityToReturn);
-			return entityToReturn;
+			return _dbSet;
+		}
+		public IQueryable<TEntity> Read(Expression<Func<TEntity, bool>> filter)
+		{
+			return _dbSet.Where(filter);
 		}
 
-		public TEntity Update(TEntity entityToUpdate)
+		// UPDATE
+		public void Update(TEntity entityToUpdate)
 		{
-			entityToUpdate.ModifiedTime = DateTime.UtcNow;
-			_data[entityToUpdate.Id] = entityToUpdate;
-			return _data[entityToUpdate.Id];
+			_dbSet.Attach(entityToUpdate);
+			_context.Entry(entityToUpdate).State = EntityState.Modified;
 		}
 
-		public void Delete(int id)
+		// DETETE
+		public virtual async void Delete(int id)
 		{
-			var entityToDelete = ReadById(id);
+			var entityToDelete = await _dbSet.Where(e => e.Id == id).FirstOrDefaultAsync();
 			Delete(entityToDelete);
 		}
-
 		public void Delete(TEntity entityToDelete)
 		{
-			_data.TryRemove(entityToDelete.Id, out entityToDelete);
+			if (_context.Entry(entityToDelete).State == EntityState.Deleted)
+			{
+				_dbSet.Attach(entityToDelete);
+			}
+			_dbSet.Remove(entityToDelete);
 		}
 	}
 }

@@ -22,7 +22,6 @@ namespace ASP.NetCore.Empty.Data
 			using (var context = new AppDbContext(
 				serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>()))
 			{
-
 				await context.Database.EnsureCreatedAsync();
 
 				if (await context.TodoItems.AnyAsync())
@@ -43,32 +42,32 @@ namespace ASP.NetCore.Empty.Data
 				{
 					Name = "This is my first item on the list",
 					IsComplete = false,
-					CreatedTime = DateTime.UtcNow,
-					ModifiedTime = DateTime.UtcNow
+					CreatedTimeUTC = DateTime.UtcNow,
+					ModifiedTimeUTC = DateTime.UtcNow
 				},
 
 				new TodoItem
 				{
 					Name = "And here is the second one",
 					IsComplete = false,
-					CreatedTime = DateTime.UtcNow,
-					ModifiedTime = DateTime.UtcNow
+					CreatedTimeUTC = DateTime.UtcNow,
+					ModifiedTimeUTC = DateTime.UtcNow
 				},
 
 				new TodoItem
 				{
 					Name = "Oh don't forget the third one",
 					IsComplete = false,
-					CreatedTime = DateTime.UtcNow,
-					ModifiedTime = DateTime.UtcNow
+					CreatedTimeUTC = DateTime.UtcNow,
+					ModifiedTimeUTC = DateTime.UtcNow
 				},
 
 				new TodoItem
 				{
 					Name = "And this is the very last one",
 					IsComplete = false,
-					CreatedTime = DateTime.UtcNow,
-					ModifiedTime = DateTime.UtcNow
+					CreatedTimeUTC = DateTime.UtcNow,
+					ModifiedTimeUTC = DateTime.UtcNow
 				}
 			};
 		}

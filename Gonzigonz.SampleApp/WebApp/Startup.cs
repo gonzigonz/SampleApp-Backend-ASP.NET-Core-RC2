@@ -24,13 +24,16 @@ namespace WebApp
 			if (_hostingEnvironment.IsDevelopment())
 			{
 				services.AddDbContext<AppDbContext>(options =>
-				options.UseInMemoryDatabase());
+					options.UseInMemoryDatabase()
+				);
 			}
 			else
 			{
 				services.AddDbContext<AppDbContext>(options =>
-			options.UseSqlServer("Server=localhost;Database=GonzigonzSampleApp;Trusted_Connection=true;MultipleActiveResultSets=true;"));
-
+					options.UseSqlServer(
+						"Server=localhost;Database=GonzigonzSampleApp;Trusted_Connection=true;MultipleActiveResultSets=true;",
+						b => b.MigrationsAssembly("WebApp"))
+				);
 			}
 			services.AddMvc();
 		}
@@ -42,17 +45,19 @@ namespace WebApp
 			if (_hostingEnvironment.IsDevelopment())
 			{
 				AppDatabase.InitializeForDevelopment(app.ApplicationServices);
-				app.UseDeveloperExceptionPage();
+				app.UseRuntimeInfoPage();
+				app.UseBrowserLink();
 			}
 			else
 			{
 				AppDatabase.Initialize(app.ApplicationServices);
 			}
+
 			// Error Handling and Diagnostics
-			app.UseRuntimeInfoPage();
 			app.UseDeveloperExceptionPage();
-			app.UseDatabaseErrorPage(); // Shows database operation failures. Good incase you've missed a migration.
-			app.UseBrowserLink();
+
+			// Shows database operation failures. Good incase you've missed a migration.
+			app.UseDatabaseErrorPage();
 
 			// Allows any static content in wwwroot to be servered
 			app.UseStaticFiles();

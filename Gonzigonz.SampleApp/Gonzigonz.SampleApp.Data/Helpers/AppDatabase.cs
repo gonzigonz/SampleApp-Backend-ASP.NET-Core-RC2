@@ -1,5 +1,6 @@
 ﻿using Gonzigonz.SampleApp.Data.Context;
 using Gonzigonz.SampleApp.Domain;
+using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,6 +12,7 @@ namespace ASP.NetCore.Empty.Data
 	{
 		public static async void Initialize(IServiceProvider serviceProvider)
 		{
+			// Use Migrations
 			using (var context = new AppDbContext(
 				serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>()))
 			{
@@ -19,20 +21,25 @@ namespace ASP.NetCore.Empty.Data
 		}
 		public static async void InitializeForDevelopment(IServiceProvider serviceProvider)
 		{
+			// Use Auto Database Generation without the need for Migrations
 			using (var context = new AppDbContext(
 				serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>()))
 			{
 				await context.Database.EnsureCreatedAsync();
-
-				if (await context.TodoItems.AnyAsync())
-				{
-					return;   // DB has already been seeded
-				}
-
-				context.TodoItems.AddRange(SeedTodoItemsData());
-
-				await context.SaveChangesAsync();
 			}
+
+			// Seed Dev Data
+			var todoRepo = serviceProvider.GetRequiredService<ITodoItemRepository>();
+			var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
+
+			if (await todoRepo.ReadAll().AnyAsync())
+			{
+				return; // Database has already been seeded
+			};
+
+			todoRepo.CreateBulk(SeedTodoItemsData());
+			unitOfWork.SaveChangesAsync();
+
 		}
 
 		static IList<TodoItem> SeedTodoItemsData()
@@ -41,33 +48,25 @@ namespace ASP.NetCore.Empty.Data
 				new TodoItem
 				{
 					Name = "This is my first item on the list",
-					IsComplete = false,
-					CreatedTimeUTC = DateTime.UtcNow,
-					ModifiedTimeUTC = DateTime.UtcNow
+					IsComplete = false
 				},
 
 				new TodoItem
 				{
 					Name = "And here is the second one",
-					IsComplete = false,
-					CreatedTimeUTC = DateTime.UtcNow,
-					ModifiedTimeUTC = DateTime.UtcNow
+					IsComplete = false
 				},
 
 				new TodoItem
 				{
 					Name = "Oh don't forget the third one",
-					IsComplete = false,
-					CreatedTimeUTC = DateTime.UtcNow,
-					ModifiedTimeUTC = DateTime.UtcNow
+					IsComplete = false
 				},
 
 				new TodoItem
 				{
 					Name = "And this is the very last one",
-					IsComplete = false,
-					CreatedTimeUTC = DateTime.UtcNow,
-					ModifiedTimeUTC = DateTime.UtcNow
+					IsComplete = false
 				}
 			};
 		}

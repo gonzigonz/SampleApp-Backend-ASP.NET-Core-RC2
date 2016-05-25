@@ -4,6 +4,9 @@ using Gonzigonz.SampleApp.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using ASP.NetCore.Empty.Data;
+using Gonzigonz.SampleApp.RepositoryInterfaces;
+using Gonzigonz.SampleApp.Data.UnitOfWork;
+using Gonzigonz.SampleApp.Data.Repositories;
 
 namespace WebApp
 {
@@ -36,6 +39,10 @@ namespace WebApp
 				);
 			}
 			services.AddMvc();
+
+			// All other services.
+			services.AddScoped<IUnitOfWork, AppUnitOfWork>();
+			services.AddScoped<ITodoItemRepository, TodoItemRepository>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

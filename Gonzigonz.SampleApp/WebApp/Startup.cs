@@ -7,6 +7,7 @@ using ASP.NetCore.Empty.Data;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Gonzigonz.SampleApp.Data.UnitOfWork;
 using Gonzigonz.SampleApp.Data.Repositories;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace WebApp
 {
@@ -27,8 +28,9 @@ namespace WebApp
 			if (_hostingEnvironment.IsDevelopment())
 			{
 				services.AddDbContext<AppDbContext>(options =>
-					options.UseInMemoryDatabase()
-				);
+					options.UseInMemoryDatabase());
+				services.AddDbContext<AppIdentityDbContext>(options =>
+					options.UseInMemoryDatabase());
 			}
 			else
 			{
@@ -37,7 +39,24 @@ namespace WebApp
 						"Server=localhost;Database=GonzigonzSampleApp;Trusted_Connection=true;MultipleActiveResultSets=true;",
 						b => b.MigrationsAssembly("WebApp"))
 				);
+				services.AddDbContext<AppIdentityDbContext>(options =>
+					options.UseSqlServer(
+						"Server=localhost;Database=GonzigonzSampleApp;Trusted_Connection=true;MultipleActiveResultSets=true;",
+						b => b.MigrationsAssembly("WebApp"))
+				);
 			}
+
+			services.AddIdentity<IdentityUser, IdentityRole>(config =>
+			{
+				config.User.RequireUniqueEmail = false;
+				config.Password.RequiredLength = 5;
+				config.Password.RequireDigit = false;
+				config.Password.RequireNonAlphanumeric = false;
+				config.Password.RequireUppercase = false;
+			})
+				.AddEntityFrameworkStores<AppIdentityDbContext>()
+				.AddDefaultTokenProviders();
+
 			services.AddMvc();
 
 			// All other services.
@@ -65,6 +84,9 @@ namespace WebApp
 
 			// Shows database operation failures. Good incase you've missed a migration.
 			app.UseDatabaseErrorPage();
+
+			// Use Asp.Net Identity
+			app.UseIdentity();
 
 			// Allows any static content in wwwroot to be servered
 			app.UseStaticFiles();

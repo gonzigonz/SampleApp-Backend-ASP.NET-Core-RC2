@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -10,6 +11,7 @@ namespace Gonzigonz.SampleApp.RepositoryInterfaces
     {
 		// CREATE
 		void Create(TEntity entity);
+		void CreateBulk(IEnumerable<TEntity> entityCollection);
 
 		// READ
 		IQueryable<TEntity> ReadAll();

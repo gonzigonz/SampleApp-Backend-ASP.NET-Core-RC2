@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 using Gonzigonz.SampleApp.Domain;
+using System.Collections.Generic;
 
 namespace Gonzigonz.SampleApp.Data.Repositories
 {
@@ -29,6 +30,10 @@ namespace Gonzigonz.SampleApp.Data.Repositories
 		public void Create(TEntity entityToAdd)
 		{
 			_dbSet.Add(entityToAdd);
+		}
+		public void CreateBulk(IEnumerable<TEntity> entityCollection)
+		{
+			_dbSet.AddRange(entityCollection);
 		}
 
 		// READ

@@ -1,17 +1,16 @@
-using System.Linq;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
+using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Gonzigonz.SampleApp.Domain;
-using System;
 
 namespace WebApp.Controllers
 {
 	public class AppController : Controller
     {
-		private ITodoItemRepository _todoItemRepo;
-		private IUnitOfWork _unitOfWork;
+		private readonly ITodoItemRepository _todoItemRepo;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public AppController(ITodoItemRepository todoItemRepository, IUnitOfWork unitOfWork)
 		{
@@ -19,8 +18,8 @@ namespace WebApp.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-        // GET: App
-        public async Task<IActionResult> Index()
+		// GET: App
+		public async Task<IActionResult> Index()
         {
             return View(await _todoItemRepo
 				.ReadAll()
@@ -163,7 +162,7 @@ namespace WebApp.Controllers
 			return View(todoItem);
 		}
 
-		// POST: App/Delete/5
+		// POST: App/DeleteConfirmed/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int? id)

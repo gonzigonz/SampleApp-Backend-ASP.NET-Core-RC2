@@ -2,12 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Gonzigonz.SampleApp.Data.Context;
 
 namespace WebApp.Migrations.AppIdentityDb
 {
-    [DbContext(typeof(AppIdentityDbContext))]
+	[DbContext(typeof(AppIdentityDbContext))]
     partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

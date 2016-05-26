@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace WebApp.Migrations.AppIdentityDb
 {
-    public partial class Identity_Initial : Migration
+	public partial class Identity_Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

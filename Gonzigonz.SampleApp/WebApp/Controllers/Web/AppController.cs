@@ -1,12 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Gonzigonz.SampleApp.Domain;
 
 namespace WebApp.Controllers
 {
+	[Authorize]
 	public class AppController : Controller
     {
 		private readonly ITodoItemRepository _todoItemRepo;

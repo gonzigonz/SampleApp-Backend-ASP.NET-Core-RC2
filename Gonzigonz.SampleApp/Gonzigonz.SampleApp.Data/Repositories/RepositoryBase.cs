@@ -54,11 +54,6 @@ namespace Gonzigonz.SampleApp.Data.Repositories
 		}
 
 		// DETETE
-		public virtual async void Delete(int id)
-		{
-			var entityToDelete = await _dbSet.Where(e => e.Id == id).FirstOrDefaultAsync();
-			Delete(entityToDelete);
-		}
 		public void Delete(TEntity entityToDelete)
 		{
 			if (_context.Entry(entityToDelete).State == EntityState.Deleted)

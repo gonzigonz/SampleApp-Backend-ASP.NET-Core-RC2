@@ -4,6 +4,7 @@ using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Gonzigonz.SampleApp.Data.UnitOfWork
 {
@@ -16,7 +17,7 @@ namespace Gonzigonz.SampleApp.Data.UnitOfWork
 			_context = context;
 		}
 
-		public void SaveChangesAsync()
+		public async Task<int> SaveChangesAsync()
 		{
 			foreach (var entry in _context.ChangeTracker.Entries()
 					   .Where(
@@ -32,7 +33,8 @@ namespace Gonzigonz.SampleApp.Data.UnitOfWork
 				}
 				e.ModifiedTimeUTC = DateTime.UtcNow;
 			}
-			_context.SaveChangesAsync();
+
+			return await _context.SaveChangesAsync();
 		}
 	}
 }

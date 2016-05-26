@@ -21,7 +21,6 @@ namespace Gonzigonz.SampleApp.RepositoryInterfaces
 		void Update(TEntity entityToUpdate);
 
 		// DELETE
-		void Delete(TId id);
 		void Delete(TEntity entityToDelete);
 	}
 }

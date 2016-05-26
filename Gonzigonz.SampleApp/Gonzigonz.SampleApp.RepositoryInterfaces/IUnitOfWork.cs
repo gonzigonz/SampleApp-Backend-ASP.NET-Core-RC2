@@ -1,7 +1,9 @@
-﻿namespace Gonzigonz.SampleApp.RepositoryInterfaces
+﻿using System.Threading.Tasks;
+
+namespace Gonzigonz.SampleApp.RepositoryInterfaces
 {
 	public interface IUnitOfWork
     {
-		void SaveChangesAsync();
+		Task<int> SaveChangesAsync();
     }
 }

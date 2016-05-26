@@ -8,11 +8,45 @@
 {
 	<form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
 		<ul class="nav navbar-nav navbar-right">
-			<li>
-				<a asp-controller="Manage" asp-action="Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-			</li>
-			<li>
-				<button type="submit" class="btn btn-link navbar-btn navbar-link">Log off</button>
+			@if (User.IsInRole("Administrator"))
+			{
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						Administration <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class="navbar-text">General</li>
+						<li>
+							<a href="#">App Info</a>
+						</li>
+						<li>
+							<a href="#">Settings</a>
+						</li>
+						<li role="separator" class="divider"></li>
+						<li class="navbar-text">Users</li>
+						<li>
+							<a asp-controller="Account" asp-action="Register">Register</a>
+						</li>
+					</ul>
+				</li>
+				
+			}
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					Hello @UserManager.GetUserName(User)! <span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="#">Profile</a>
+					</li>
+					<li>
+						<a asp-controller="Manage" asp-action="Index" title="Manage">Account</a>
+					</li>
+					<li role="separator" class="divider"></li>
+					<li>
+						<button type="submit" class="btn btn-link navbar-btn navbar-link">Log off</button>
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</form>
@@ -20,7 +54,6 @@
 else
 {
 	<ul class="nav navbar-nav navbar-right">
-		<li><a asp-controller="Account" asp-action="Register">Register</a></li>
 		<li><a asp-controller="Account" asp-action="Login">Log in</a></li>
 	</ul>
 }

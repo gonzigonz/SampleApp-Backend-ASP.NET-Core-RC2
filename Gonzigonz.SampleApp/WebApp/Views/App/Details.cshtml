@@ -1,0 +1,48 @@
+﻿@model TodoItem
+
+@{
+	ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+	<h4>TodoItem</h4>
+	<hr />
+	<dl class="dl-horizontal">
+		<dt>
+			@Html.DisplayNameFor(model => model.Name)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.Name)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.Details)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.Details)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.IsComplete)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.IsComplete)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.ModifiedTimeUTC)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.ModifiedTimeUTC)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.CreatedTimeUTC)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.CreatedTimeUTC)
+		</dd>
+	</dl>
+</div>
+<div>
+	<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+	<a asp-action="Index">Back to List</a>
+</div>

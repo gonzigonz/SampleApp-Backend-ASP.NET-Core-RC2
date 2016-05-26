@@ -70,13 +70,15 @@ namespace WebApp
 			// Before we setup the pipeline, get the database up
 			if (_hostingEnvironment.IsDevelopment())
 			{
-				AppDatabase.InitializeForDevelopment(app.ApplicationServices);
+				AppDatabase.InitializeDatabase(app.ApplicationServices,
+					isProduction: false);
 				app.UseRuntimeInfoPage();
 				app.UseBrowserLink();
 			}
 			else
 			{
-				AppDatabase.Initialize(app.ApplicationServices);
+				AppDatabase.InitializeDatabase(app.ApplicationServices,
+					isProduction: true);
 			}
 
 			// Error Handling and Diagnostics

@@ -7,57 +7,44 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace ASP.NetCore.Empty.Data
 {
 	public static class AppDatabase
 	{
-		public static async void Initialize(IServiceProvider serviceProvider)
+		public static async void InitializeDatabase(IServiceProvider serviceProvider, bool isProduction)
 		{
-			/// Use Migrations
-
-			// Ensure App Identity tables are up-to-date
-			await EnsureIdentityDatabaseExists(serviceProvider,
-				isDevelopment: false);
-
-			// Ensure App database tables are up-to-date
-			using (var context = new AppDbContext(
-				serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>()))
-			{
-				await context.Database.MigrateAsync();
-			}
-		}
-		public static async void InitializeForDevelopment(IServiceProvider serviceProvider)
-		{
-			/// Use Auto Database Generation without the need for Migrations
-
-			// Create App Identity tables
-			await EnsureIdentityDatabaseExists(serviceProvider,
-				isDevelopment: true);
 
 			// Create App database tables
-			using (var context = new AppDbContext(
-				serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>()))
+			using (var context = serviceProvider.GetRequiredService<AppDbContext>())
 			{
-				await context.Database.EnsureCreatedAsync();
+				if (isProduction)
+				{
+					// FOR PROD - Use Migrations
+					await context.Database.MigrateAsync();
+				}
+				else
+				{
+					// FOR NON PROD - Use Auto Database Generation without the need for Migrations
+					await context.Database.EnsureCreatedAsync();
+
+					// Seed Development Data
+					var todoRepo = serviceProvider.GetRequiredService<ITodoItemRepository>();
+					var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
+
+					if (await todoRepo.ReadAll().AnyAsync())
+					{
+						return; // Database has already been seeded
+					};
+
+					todoRepo.CreateBulk(SeedTodoItemsData());
+					unitOfWork.SaveChangesAsync();
+				}
 			}
-
-			// Seed Development Data
-			var todoRepo = serviceProvider.GetRequiredService<ITodoItemRepository>();
-			var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
-
-			if (await todoRepo.ReadAll().AnyAsync())
-			{
-				return; // Database has already been seeded
-			};
-
-			todoRepo.CreateBulk(SeedTodoItemsData());
-			unitOfWork.SaveChangesAsync();
 
 		}
 
-		private static async Task EnsureIdentityDatabaseExists(IServiceProvider serviceProvider, bool isDevelopment)
+		private static async void EnsureIdentityDatabaseExists(IServiceProvider serviceProvider, bool isDevelopment)
 		{
 			using (var identityContext = new AppIdentityDbContext(
 				serviceProvider.GetRequiredService<DbContextOptions<AppIdentityDbContext>>()))

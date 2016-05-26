@@ -65,7 +65,8 @@ namespace WebAPI
             loggerFactory.AddDebug();
 
 			// Before we setup the pipeline, get the database up
-			AppDatabase.InitializeForDevelopment(app.ApplicationServices);
+			AppDatabase.InitializeDatabase(app.ApplicationServices, 
+				isProduction: false);
 			app.UseRuntimeInfoPage();
 			app.UseDeveloperExceptionPage();
 			app.UseBrowserLink();

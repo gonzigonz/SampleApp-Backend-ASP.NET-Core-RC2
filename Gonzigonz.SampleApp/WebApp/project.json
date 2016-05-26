@@ -4,6 +4,7 @@
 			"version": "1.0.0-rc2-3002702",
 			"type": "platform"
 		},
+		"Microsoft.AspNetCore.Authorization": "1.0.0-rc2-final",
 		"Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-final",
 		"Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0-rc2-final",
 		"Microsoft.AspNetCore.Server.IISIntegration": "1.0.0-rc2-final",
@@ -14,7 +15,6 @@
 			"version": "1.0.0-preview1-final",
 			"type": "build"
 		},
-		"Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
 		"Microsoft.EntityFrameworkCore.SqlServer": "1.0.0-rc2-final",
 		"Microsoft.EntityFrameworkCore.InMemory": "1.0.0-rc2-final",
 		"Microsoft.EntityFrameworkCore.Tools": {
@@ -31,7 +31,8 @@
 			"version": "1.0.0-preview1-final",
 			"type": "build"
 		},
-		"Gonzigonz.SampleApp.Data": "1.0.0-*"
+		"Gonzigonz.SampleApp.Data": "1.0.0-*",
+		"Gonzigonz.SampleApp.IdentityServices": "1.0.0-*"
 	},
 
 	"tools": {

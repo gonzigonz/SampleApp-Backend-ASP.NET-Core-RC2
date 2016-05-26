@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Gonzigonz.SampleApp.Data;
+using Gonzigonz.SampleApp.Data.Context;
 using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Gonzigonz.SampleApp.Data.Repositories;
-using Newtonsoft.Json.Serialization;
-using Gonzigonz.SampleApp.Data.Context;
-using Microsoft.EntityFrameworkCore;
-using ASP.NetCore.Empty.Data;
 using Gonzigonz.SampleApp.Data.UnitOfWork;
 
 namespace WebAPI
@@ -66,7 +66,7 @@ namespace WebAPI
 
 			// Before we setup the pipeline, get the database up
 			AppDatabase.InitializeDatabase(app.ApplicationServices, 
-				isProduction: false);
+				isProduction: _hostingEnvironment.IsProduction());
 			app.UseRuntimeInfoPage();
 			app.UseDeveloperExceptionPage();
 			app.UseBrowserLink();

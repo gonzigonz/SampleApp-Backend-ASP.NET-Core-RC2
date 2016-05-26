@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Gonzigonz.SampleApp.Data.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using ASP.NetCore.Empty.Data;
-using Gonzigonz.SampleApp.RepositoryInterfaces;
-using Gonzigonz.SampleApp.Data.UnitOfWork;
-using Gonzigonz.SampleApp.Data.Repositories;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Gonzigonz.SampleApp.Data;
+using Gonzigonz.SampleApp.Data.Context;
+using Gonzigonz.SampleApp.RepositoryInterfaces;
+using Gonzigonz.SampleApp.Data.Repositories;
+using Gonzigonz.SampleApp.Data.UnitOfWork;
+using Gonzigonz.SampleApp.IdentityServices;
+using Gonzigonz.SampleApp.IdentityServicesInterfaces;
 
 namespace WebApp
 {
@@ -50,6 +52,7 @@ namespace WebApp
 			services.AddIdentity<IdentityUser, IdentityRole>(config =>
 			{
 				config.User.RequireUniqueEmail = false;
+
 				config.Password.RequiredLength = 5;
 				config.Password.RequireDigit = false;
 				config.Password.RequireNonAlphanumeric = false;
@@ -63,6 +66,8 @@ namespace WebApp
 			// All other services.
 			services.AddScoped<IUnitOfWork, AppUnitOfWork>();
 			services.AddScoped<ITodoItemRepository, TodoItemRepository>();
+			services.AddTransient<IEmailSender, AuthMessageSender>();
+			services.AddTransient<ISmsSender, AuthMessageSender>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,17 +77,20 @@ namespace WebApp
 			loggerFactory.AddConsole(LogLevel.Debug);
 
 			// Before we setup the pipeline, get the database up
+			AppDatabase.InitializeDatabase(app.ApplicationServices,
+				isProduction: _hostingEnvironment.IsProduction());
+			AppDatabase.EnsureIdentityDatabaseExists(app.ApplicationServices,
+				isProduction: _hostingEnvironment.IsProduction());
+
+			// Setup pipeline
 			if (_hostingEnvironment.IsDevelopment())
 			{
-				AppDatabase.InitializeDatabase(app.ApplicationServices,
-					isProduction: false);
 				app.UseRuntimeInfoPage();
 				app.UseBrowserLink();
 			}
 			else
 			{
-				AppDatabase.InitializeDatabase(app.ApplicationServices,
-					isProduction: true);
+
 			}
 
 			// Error Handling and Diagnostics

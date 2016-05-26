@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
-namespace ASP.NetCore.Empty.Data
+namespace Gonzigonz.SampleApp.Data
 {
 	public static class AppDatabase
 	{
@@ -38,43 +38,43 @@ namespace ASP.NetCore.Empty.Data
 					};
 
 					todoRepo.CreateBulk(SeedTodoItemsData());
-					unitOfWork.SaveChangesAsync();
+					await unitOfWork.SaveChangesAsync();
 				}
 			}
 
 		}
 
-		private static async void EnsureIdentityDatabaseExists(IServiceProvider serviceProvider, bool isDevelopment)
+		public static async void EnsureIdentityDatabaseExists(IServiceProvider serviceProvider, bool isProduction)
 		{
 			using (var identityContext = new AppIdentityDbContext(
 				serviceProvider.GetRequiredService<DbContextOptions<AppIdentityDbContext>>()))
 			{
-				// Ensure the database is created and up-to-date
-				if (isDevelopment)
+				// Ensure the identity tables are created and up-to-date
+				if (isProduction)
 				{
-					await identityContext.Database.EnsureCreatedAsync();
+					await identityContext.Database.MigrateAsync();
 				}
 				else
 				{
-					await identityContext.Database.MigrateAsync();
+					await identityContext.Database.EnsureCreatedAsync();
 				}
 
 				// Ensure the admin user exists
 				var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-				var adminUser = new IdentityUser { UserName = "Admin" };
+				var adminUser = new IdentityUser { UserName = "/" };
 
 				if (await userManager.FindByNameAsync("Admin") == null)
 				{
 					var result = await userManager.CreateAsync(adminUser, "admin");
-					if (!result.Succeeded)
-					{
-						// TODO: Gonz implement correct logging!
-						Console.WriteLine("Could not create default 'Admin' user");
-						foreach (var error in result.Errors)
-						{
-							Console.WriteLine($"{error.Code}: {error.Description}");
-						}
-					}
+					//if (!result.Succeeded)
+					//{
+					//	// TODO: Gonz implement correct logging!
+					//	Console.WriteLine("Could not create default 'Admin' user");
+					//	foreach (var error in result.Errors)
+					//	{
+					//		Console.WriteLine($"{error.Code}: {error.Description}");
+					//	}
+					//}
 				};
 			}
 		}

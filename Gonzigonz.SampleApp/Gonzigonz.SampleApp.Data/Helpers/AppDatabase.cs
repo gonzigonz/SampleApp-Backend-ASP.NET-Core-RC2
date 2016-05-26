@@ -12,6 +12,10 @@ namespace Gonzigonz.SampleApp.Data
 {
 	public static class AppDatabase
 	{
+		const string DEFAULT_ADMIN_USER = "Admin";
+		const string DEFAULT_ADMIN_PASSWORD = "admin";
+		const string DEFAULT_ADMINISTRATOR_ROLE = "Administrator";
+
 		public static async void InitializeDatabase(IServiceProvider serviceProvider, bool isProduction)
 		{
 
@@ -61,14 +65,16 @@ namespace Gonzigonz.SampleApp.Data
 
 				// Ensure the admin user exists
 				var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-				var adminUser = new IdentityUser { UserName = "/" };
 
-				if (await userManager.FindByNameAsync("Admin") == null)
+				if (await userManager.FindByNameAsync(DEFAULT_ADMIN_USER) == null)
 				{
-					var result = await userManager.CreateAsync(adminUser, "admin");
+					// If not create it
+					var adminUser = new IdentityUser { UserName = DEFAULT_ADMIN_USER };
+					var result = await userManager.CreateAsync(adminUser, DEFAULT_ADMIN_PASSWORD);
+
+					// TODO: Gonz introduce correct logging!
 					//if (!result.Succeeded)
 					//{
-					//	// TODO: Gonz implement correct logging!
 					//	Console.WriteLine("Could not create default 'Admin' user");
 					//	foreach (var error in result.Errors)
 					//	{
@@ -76,6 +82,21 @@ namespace Gonzigonz.SampleApp.Data
 					//	}
 					//}
 				};
+
+				// Ensure the administrators role exists
+				var roleManger = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+				if (await roleManger.FindByNameAsync(DEFAULT_ADMINISTRATOR_ROLE) == null)
+				{
+					// If not create it
+					var administratorsRole = new IdentityRole { Name = DEFAULT_ADMINISTRATOR_ROLE };
+					var result = await roleManger.CreateAsync(administratorsRole);
+
+					// Add the admin user to the new role
+					var adminUser = await userManager.FindByNameAsync(DEFAULT_ADMIN_USER);
+					await userManager.AddToRoleAsync(adminUser, DEFAULT_ADMINISTRATOR_ROLE);
+
+					// TODO: Gonz introduce correct logging!
+				}
 			}
 		}
 

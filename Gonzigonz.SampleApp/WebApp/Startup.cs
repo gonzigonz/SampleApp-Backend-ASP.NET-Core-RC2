@@ -8,6 +8,7 @@ using Gonzigonz.SampleApp.RepositoryInterfaces;
 using Gonzigonz.SampleApp.Data.UnitOfWork;
 using Gonzigonz.SampleApp.Data.Repositories;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace WebApp
 {
@@ -65,8 +66,11 @@ namespace WebApp
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app)
+		public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
 		{
+			// Start logging
+			loggerFactory.AddConsole(LogLevel.Debug);
+
 			// Before we setup the pipeline, get the database up
 			if (_hostingEnvironment.IsDevelopment())
 			{
